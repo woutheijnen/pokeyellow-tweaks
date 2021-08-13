@@ -131,14 +131,6 @@ LoadSAVIgnoreBadCheckSum:
 
 SaveSAV:
 	farcall PrintSaveScreenText
-	ld c, 10
-	call DelayFrames
-	ld hl, WouldYouLikeToSaveText
-	call SaveSAVConfirm
-	and a   ;|0 = Yes|1 = No|
-	ret nz
-	ld c, 10
-	call DelayFrames
 	ld a, [wSaveFileStatus]
 	cp $1
 	jr z, .save
@@ -150,18 +142,12 @@ SaveSAV:
 	ret nz
 .save
 	call SaveSAVtoSRAM
-	ld hl, SavingText
-	call PrintText
-	ld c, 128
-	call DelayFrames
 	ld hl, GameSavedText
 	call PrintText
-	ld c, 10
-	call DelayFrames
 	ld a, SFX_SAVE
 	call PlaySoundWaitForCurrent
 	call WaitForSoundToFinish
-	ld c, 30
+	ld c, 10
 	call DelayFrames
 	ret
 
@@ -174,14 +160,6 @@ SaveSAVConfirm:
 	call DisplayTextBoxID ; yes/no menu
 	ld a, [wCurrentMenuItem]
 	ret
-
-WouldYouLikeToSaveText:
-	text_far _WouldYouLikeToSaveText
-	text_end
-
-SavingText:
-	text_far _SavingText
-	text_end
 
 GameSavedText:
 	text_far _GameSavedText
