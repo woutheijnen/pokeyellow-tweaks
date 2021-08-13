@@ -5491,13 +5491,7 @@ AIGetTypeEffectiveness:
 	inc hl
 	jr .loop
 .done
-	; 40% chance for Lorelei's Dewgong to ignore type effectiveness?
-	ld a, [wTrainerClass]
-	cp LORELEI
-	jr nz, .ok
-	ld a, [wEnemyMonSpecies]
-	cp DEWGONG
-	jr nz, .ok
+	; 40% chance to ignore type effectiveness for any trainer, any species
 	call BattleRandom
 	cp $66 ; 40 percent
 	ret c
