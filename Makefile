@@ -1,4 +1,4 @@
-roms := pokeyellow.gbc pokeyellow_debug.gbc
+roms := pokeyellow.gbc
 
 rom_obj := \
 audio.o \
@@ -13,7 +13,6 @@ gfx/sprites.o \
 gfx/tilesets.o
 
 pokeyellow_obj       := $(rom_obj)
-pokeyellow_debug_obj := $(rom_obj:.o=_debug.o)
 
 
 ### Build tools
@@ -37,18 +36,17 @@ RGBLINK ?= $(RGBDS)rgblink
 .SECONDEXPANSION:
 .PRECIOUS:
 .SECONDARY:
-.PHONY: all yellow yellow_debug clean tidy compare tools
+.PHONY: all yellow clean tidy compare tools
 
 all: $(roms)
 yellow:       pokeyellow.gbc
-yellow_debug: pokeyellow_debug.gbc
 
 clean: tidy
 	find gfx \( -iname '*.1bpp' -o -iname '*.2bpp' -o -iname '*.pic' \) -delete
 	find audio/pikachu_cries \( -iname '*.pcm' \) -delete
 
 tidy:
-	rm -f $(roms) $(pokeyellow_obj) $(pokeyellow_debug_obj) $(roms:.gbc=.map) $(roms:.gbc=.sym) rgbdscheck.o
+	rm -f $(roms) $(pokeyellow_obj) $(roms:.gbc=.map) $(roms:.gbc=.sym) rgbdscheck.o
 	$(MAKE) clean -C tools/
 
 compare: $(roms)
@@ -59,12 +57,6 @@ tools:
 
 
 RGBASMFLAGS = -h -L -Weverything
-# Create a sym/map for debug purposes if `make` run with `DEBUG=1`
-ifeq ($(DEBUG),1)
-RGBASMFLAGS += -E
-endif
-
-$(pokeyellow_debug_obj): RGBASMFLAGS += -D _DEBUG
 
 rgbdscheck.o: rgbdscheck.asm
 	$(RGBASM) -o $@ $<
@@ -85,7 +77,6 @@ $(info $(shell $(MAKE) -C tools))
 
 # Dependencies for objects
 $(foreach obj, $(pokeyellow_obj), $(eval $(call DEP,$(obj),$(obj:.o=.asm))))
-$(foreach obj, $(pokeyellow_debug_obj), $(eval $(call DEP,$(obj),$(obj:_debug.o=.asm))))
 
 endif
 
@@ -94,7 +85,6 @@ endif
 
 
 pokeyellow_pad       = 0x00
-pokeyellow_debug_pad = 0xff
 
 opts = -cjsv -k 01 -l 0x33 -m 0x1b -p 0 -r 03 -t "POKEMON YELLOW"
 
